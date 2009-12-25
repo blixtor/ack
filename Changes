@@ -1,4 +1,5 @@
 NEXT
+
     [FIXES]
     Fixed ack misbehavior when using --match or not specifying a regex:
       ack --match Sue
@@ -8,10 +9,10 @@ NEXT
       ack --no-recurse --recurse foo
     
     [ENHANCEMENTS]
+    Added option --show-types to output the types that ack considers a file
+    to have.
 
 1.92        Fri Dec 11 11:47:56 CST 2009
-
-    ack is now hosted at github: http://github.com/petdance/ack
 
     [FIXES]
     The --pager flag would not work.  Now it does.  Thanks Packy
