@@ -8,6 +8,9 @@ NEXT
     Added man page documenation of --recurse option and fixed behavior:
       ack --no-recurse --recurse foo
     
+    ack always returned 0 when piped into, no matter how many matches where
+    found.
+
     [ENHANCEMENTS]
     Added option --show-types to output the types that ack considers a file
     to have.
