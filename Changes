@@ -15,6 +15,9 @@ NEXT
 
     Fixed issue 81: .ackrc now ignores leading/trailing whitespace.
 
+    Fixed issue 82: ack --help now shows only the directories ignored by
+    default.
+
     Giving both --line and a regex (with --match) now leads to an error. This
     fixes issue 76. The same is true for -f or -g in conjunction with --match.
 
@@ -22,8 +25,12 @@ NEXT
     Added option --show-types to output the types that ack considers a file
     to have.
 
+    Added option --help-dirs that outputs which directories are currently
+    ignored.
+
     --noenv can be canceled by specifying --env:
       ACK_OPTIONS=-i ack --noenv --env sue t/text/boy-named-sue.txt
+
 
 1.92        Fri Dec 11 11:47:56 CST 2009
 

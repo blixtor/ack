@@ -35,6 +35,7 @@ our %types;
 our %type_wanted;
 our %mappings;
 our %ignore_dirs;
+our %ignore_dirs_default;
 
 our $input_from_pipe;
 our $output_to_pipe;
@@ -48,7 +49,7 @@ use File::Glob ':glob';
 use Getopt::Long ();
 
 BEGIN {
-    %ignore_dirs = (
+    %ignore_dirs_default = (
         '.bzr'              => 'Bazaar',
         '.cdv'              => 'Codeville',
         '~.dep'             => 'Interface Builder',
@@ -69,6 +70,8 @@ BEGIN {
         'cover_db'          => 'Devel::Cover',
         _build              => 'Module::Build',
     );
+
+    %ignore_dirs = %ignore_dirs_default;
 
     %mappings = (
         actionscript => [qw( as mxml )],
@@ -244,6 +247,7 @@ sub get_command_line_options {
         'version'   => sub { print_version_statement(); exit 1; },
         'help|?:s'  => sub { shift; show_help(@_); exit; },
         'help-types'=> sub { show_help_types(); exit; },
+        'help-dirs' => sub { show_help_ignored_dirs(); exit; },
         'man'       => sub { require Pod::Usage; Pod::Usage::pod2usage({-verbose => 2}); exit; },
 
         'type=s'    => sub {
@@ -678,9 +682,11 @@ Dumps the help page to the user.
 sub show_help {
     my $help_arg = shift || 0;
 
-    return show_help_types() if $help_arg =~ /^types?/;
+    return show_help_types()        if $help_arg =~ /^types?/;
+    return show_help_ignored_dirs() if $help_arg =~ /^(ignored?-)?dirs?/;
 
-    my $ignore_dirs = _listify( sort { _key($a) cmp _key($b) } keys %ignore_dirs );
+    # show only the dirs ignored by default
+    my $ignore_dirs = _listify( sort { _key($a) cmp _key($b) } keys %ignore_dirs_default );
 
     App::Ack::print( <<"END_OF_HELP" );
 Usage: ack [OPTION]... PATTERN [FILE]
@@ -788,7 +794,7 @@ File inclusion/exclusion:
 
   --[no]follow          Follow symlinks.  Default is off.
 
-  Directories ignored by default:
+  Directories ignored by default (see also --help-dirs):
     $ignore_dirs
 
   Files not checked for type:
@@ -800,6 +806,8 @@ File inclusion/exclusion:
 Miscellaneous:
   --noenv               Ignore environment variables and ~/.ackrc
   --help                This help
+  --help-types          Shows the file types that ack supports.
+  --help-dirs           Shows ignored directories.
   --man                 Man page
   --version             Display version & copyright
   --thpppt              Bill the Cat
@@ -846,6 +854,30 @@ END_OF_HELP
         }
         App::Ack::print( sprintf( "    --[no]%-*.*s %s\n", $maxlen, $maxlen, $type, $ext_list ) );
     }
+
+    return;
+}
+
+=head2 show_help_ignored_dirs()
+
+Display the ignored directories help subpage.
+
+=cut
+
+sub show_help_ignored_dirs {
+    my $ignored_dirs = _listify( sort { _key($a) cmp _key($b) } keys %ignore_dirs );
+
+    App::Ack::print( <<"END_OF_HELP" );
+Usage: ack [OPTION]... PATTERN [FILES]
+
+The following is a list of directories currently ignored by ack.
+
+You can add or remove directories from this list by using the
+--[no]ignore-dir option on the command line, in the ACK_OPTIONS
+environment variable or in your .ackrc.
+
+    $ignored_dirs
+END_OF_HELP
 
     return;
 }

@@ -103,7 +103,7 @@ File inclusion/exclusion:
 
   --[no]follow          Follow symlinks.  Default is off.
 
-  Directories ignored by default:
+  Directories ignored by default (see also --help-dirs):
     autom4te.cache, blib, _build, .bzr, .cdv, cover_db, CVS, _darcs, ~.dep,
     ~.dot, .git, .hg, ~.nib, .pc, ~.plst, RCS, SCCS, _sgbak and .svn
 
@@ -116,6 +116,8 @@ File inclusion/exclusion:
 Miscellaneous:
   --noenv               Ignore environment variables and ~/.ackrc
   --help                This help
+  --help-types          Shows the file types that ack supports.
+  --help-dirs           Shows ignored directories.
   --man                 Man page
   --version             Display version & copyright
   --thpppt              Bill the Cat

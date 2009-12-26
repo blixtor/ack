@@ -165,8 +165,9 @@ Perl MakeMaker system.  You may add or remove a directory from this
 list with the B<--[no]ignore-dir> option. The option may be repeated
 to add/remove multiple directories from the ignore list.
 
-For a complete list of directories that do not get searched, run
-F<ack --help>.
+For the default list of directories that do not get searched, run
+F<ack --help>. To get the current list (with potential modifications
+from .ackrc or ACK_OPTIONS), run F<ack --help-dirs>.
 
 =head1 WHEN TO USE GREP
 
@@ -289,6 +290,14 @@ searched.
 =item B<--help>
 
 Print a short help statement.
+
+=item B<--help-types>
+
+Prints help information about the supported file types.
+
+=item B<--help-dirs>
+
+Prints help information about the ignored directories.
 
 =item B<-i>, B<--ignore-case>
 
