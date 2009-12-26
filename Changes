@@ -11,9 +11,12 @@ NEXT
     ack always returned 0 when piped into, no matter how many matches where
     found.
 
+    Fixed issue 80: Piping into ack --count now works as expected.
+
     Fixed issue 81: .ackrc now ignores leading/trailing whitespace.
 
-    Giving both --line and a regex now leads to an error.
+    Giving both --line and a regex (with --match) now leads to an error. This
+    fixes issue 76. The same is true for -f or -g in conjunction with --match.
 
     [ENHANCEMENTS]
     Added option --show-types to output the types that ack considers a file
