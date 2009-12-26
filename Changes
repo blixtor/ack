@@ -13,6 +13,8 @@ NEXT
 
     Fixed issue 81: .ackrc now ignores leading/trailing whitespace.
 
+    Giving both --line and a regex now leads to an error.
+
     [ENHANCEMENTS]
     Added option --show-types to output the types that ack considers a file
     to have.
