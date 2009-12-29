@@ -25,6 +25,11 @@ NEXT
     fixes issue 76. The same is true for -f or -g in conjunction with --match.
 
     [ENHANCEMENTS]
+    Added --[no]filter option to force (or un-force) input from a pipe.
+    Normally this is detected correctly by ack on its own. This option is for
+    the cases, where ack fails (e.g. running inside emacs on Windows). This
+    takes care of issues 90 and 106.
+
     Added option --show-types to output the types that ack considers a file
     to have.
 

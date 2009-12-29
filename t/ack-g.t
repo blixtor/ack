@@ -87,7 +87,7 @@ NOT_CASE_INSENSITIVE: {
     my @expected = qw();
     my $regex = 'PIPE';
 
-    my @files = qw( . );
+    my @files = qw( t/swamp );
     my @args = ( '-i', '-g', $regex );
     my @results = run_ack( @args, @files );
 
@@ -102,7 +102,7 @@ CASE_INSENSITIVE: {
     );
     my $regex = '(?i:PIPE)';
 
-    my @files = qw( . );
+    my @files = qw( t/swamp );
     my @args = ( '-g', $regex );
     my @results = run_ack( @args, @files );
 

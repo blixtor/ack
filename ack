@@ -61,7 +61,7 @@ sub main {
 
     $| = 1 if $opt->{flush}; # Unbuffer the output if flush mode
 
-    if ( App::Ack::input_from_pipe() ) {
+    if ( App::Ack::input_from_pipe( $opt ) ) {
         # We're going into filter mode
         for ( qw( f g l ) ) {
             $opt->{$_} and App::Ack::die( "Can't use -$_ when acting as a filter." );
@@ -246,17 +246,25 @@ B<--noenv> disables all environment processing. No F<.ackrc> is read
 and all environment variables are ignored. By default, F<ack> considers
 F<.ackrc> and settings in the environment.
 
-=item B<--flush>
-
-B<--flush> flushes output immediately.  This is off by default
-unless ack is running interactively (when output goes to a pipe
-or file).
-
 =item B<-f>
 
 Only print the files that would be searched, without actually doing
 any searching.  PATTERN must not be specified, or it will be taken as
 a path to search.
+
+=item B<--filter>, B<--nofilter>
+
+Explicitly force ack into filter mode or out of filter mode (input comes
+from pipe).
+
+Normally, ack detects this automatically. This options is for the cases
+where ack fails, e.g. when run from Emacs or Vim.
+
+=item B<--flush>
+
+B<--flush> flushes output immediately.  This is off by default
+unless ack is running interactively (when output goes to a pipe
+or file).
 
 =item B<--follow>, B<--nofollow>
 
@@ -1311,6 +1319,7 @@ sub get_command_line_options {
         count                   => \$opt{count},
         'env!'                  => sub { }, # ignore this option, it is handled beforehand
         f                       => \$opt{f},
+        'filter!'               => \$opt{filter},
         flush                   => \$opt{flush},
         'follow!'               => \$opt{follow},
         'g=s'                   => sub { shift; $opt{G} = shift; $opt{f} = 1 },
@@ -1742,7 +1751,6 @@ Search output:
   -h, --no-filename     Suppress the prefixing filename on output
   -c, --count           Show number of lines matching per file
   --column              Show the column number of the first match
-
   -A NUM, --after-context=NUM
                         Print NUM lines of trailing context after matching
                         lines.
@@ -1751,7 +1759,6 @@ Search output:
                         lines.
   -C [NUM], --context[=NUM]
                         Print NUM lines (default 2) of output context.
-
   --print0              Print null byte as separator between filenames,
                         only works with -f, -g, -l, -L or -c.
 
@@ -1796,7 +1803,6 @@ File inclusion/exclusion:
   --noperl              Exclude Perl files.
   --type=noperl         Exclude Perl files.
                         See "ack --help type" for supported filetypes.
-
   --type-set TYPE=.EXTENSION[,.EXT2[,...]]
                         Files with the given EXTENSION(s) are recognized as
                         being of type TYPE. This replaces an existing
@@ -1804,7 +1810,6 @@ File inclusion/exclusion:
   --type-add TYPE=.EXTENSION[,.EXT2[,...]]
                         Files with the given EXTENSION(s) are recognized as
                         being of (the existing) type TYPE
-
   --[no]follow          Follow symlinks.  Default is off.
 
   Directories ignored by default (see also --help-dirs):
@@ -2496,6 +2501,11 @@ sub set_up_pager {
 
 
 sub input_from_pipe {
+    my $opt = shift;
+
+    # $opt->{filter} is defined only when --[no]filter option was given
+    return $opt->{filter} if defined $opt->{filter};
+
     return $input_from_pipe;
 }
 

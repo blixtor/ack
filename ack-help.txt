@@ -38,7 +38,6 @@ Search output:
   -h, --no-filename     Suppress the prefixing filename on output
   -c, --count           Show number of lines matching per file
   --column              Show the column number of the first match
-
   -A NUM, --after-context=NUM
                         Print NUM lines of trailing context after matching
                         lines.
@@ -47,7 +46,6 @@ Search output:
                         lines.
   -C [NUM], --context[=NUM]
                         Print NUM lines (default 2) of output context.
-
   --print0              Print null byte as separator between filenames,
                         only works with -f, -g, -l, -L or -c.
 
@@ -92,7 +90,6 @@ File inclusion/exclusion:
   --noperl              Exclude Perl files.
   --type=noperl         Exclude Perl files.
                         See "ack --help type" for supported filetypes.
-
   --type-set TYPE=.EXTENSION[,.EXT2[,...]]
                         Files with the given EXTENSION(s) are recognized as
                         being of type TYPE. This replaces an existing
@@ -100,7 +97,6 @@ File inclusion/exclusion:
   --type-add TYPE=.EXTENSION[,.EXT2[,...]]
                         Files with the given EXTENSION(s) are recognized as
                         being of (the existing) type TYPE
-
   --[no]follow          Follow symlinks.  Default is off.
 
   Directories ignored by default (see also --help-dirs):

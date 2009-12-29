@@ -53,7 +53,7 @@ sub main {
 
     $| = 1 if $opt->{flush}; # Unbuffer the output if flush mode
 
-    if ( App::Ack::input_from_pipe() ) {
+    if ( App::Ack::input_from_pipe( $opt ) ) {
         # We're going into filter mode
         for ( qw( f g l ) ) {
             $opt->{$_} and App::Ack::die( "Can't use -$_ when acting as a filter." );
@@ -238,17 +238,25 @@ B<--noenv> disables all environment processing. No F<.ackrc> is read
 and all environment variables are ignored. By default, F<ack> considers
 F<.ackrc> and settings in the environment.
 
-=item B<--flush>
-
-B<--flush> flushes output immediately.  This is off by default
-unless ack is running interactively (when output goes to a pipe
-or file).
-
 =item B<-f>
 
 Only print the files that would be searched, without actually doing
 any searching.  PATTERN must not be specified, or it will be taken as
 a path to search.
+
+=item B<--filter>, B<--nofilter>
+
+Explicitly force ack into filter mode or out of filter mode (input comes
+from pipe).
+
+Normally, ack detects this automatically. This options is for the cases
+where ack fails, e.g. when run from Emacs or Vim.
+
+=item B<--flush>
+
+B<--flush> flushes output immediately.  This is off by default
+unless ack is running interactively (when output goes to a pipe
+or file).
 
 =item B<--follow>, B<--nofollow>
 
