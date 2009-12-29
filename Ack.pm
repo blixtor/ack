@@ -209,6 +209,7 @@ sub get_command_line_options {
         'color-filename=s'      => \$ENV{ACK_COLOR_FILENAME},
         'column!'               => \$opt{column},
         count                   => \$opt{count},
+        'E=s'                   => \$opt{E},
         'env!'                  => sub { }, # ignore this option, it is handled beforehand
         f                       => \$opt{f},
         'filter!'               => \$opt{filter},
@@ -308,6 +309,7 @@ sub get_command_line_options {
         }
     }
 
+    # check options
     if ( defined $opt{m} && $opt{m} <= 0 ) {
         App::Ack::die( '-m must be greater than zero' );
     }
@@ -776,6 +778,7 @@ File inclusion/exclusion:
   -r, -R, --recurse     Recurse into subdirectories (ack's default behavior)
   -n, --no-recurse      No descending into subdirectories
   -G REGEX              Only search files that match REGEX
+  -E REGEX              Exclude files that match REGEX from search
 
   --perl                Include only Perl files.
   --type=perl           Include only Perl files.
@@ -1526,14 +1529,33 @@ sub get_iterator {
     # Starting points are always searched, no matter what
     my %starting_point = map { ($_ => 1) } @{$what};
 
-    my $g_regex = defined $opt->{G} ? qr/$opt->{G}/ : undef;
+    my $regex_G = defined $opt->{G} ? qr/$opt->{G}/ : undef;
+    my $regex_E = defined $opt->{E} ? qr/$opt->{E}/ : undef;
     my $file_filter;
 
-    if ( $g_regex ) {
+    if ( $regex_G && $regex_E ) {
         $file_filter
-            = $opt->{u}   ? sub { $File::Next::name =~ /$g_regex/ } # XXX Maybe this should be a 1, no?
-            : $opt->{all} ? sub { $starting_point{ $File::Next::name } || ( $File::Next::name =~ /$g_regex/ && is_searchable( $_ ) ) }
-            :               sub { $starting_point{ $File::Next::name } || ( $File::Next::name =~ /$g_regex/ && is_interesting( @_ ) ) }
+            = $opt->{u}   ? sub { $File::Next::name =~ /$regex_G/ && $File::Next::name !~ /$regex_E/ } # allow to restrict which files are searched by -G and -E option
+            : $opt->{all} ? sub { $starting_point{ $File::Next::name }
+                                    || ( $File::Next::name =~ /$regex_G/ && $File::Next::name !~ /$regex_E/ && is_searchable( $File::Next::name ) )
+                                }
+            :               sub { $starting_point{ $File::Next::name }
+                                    || ( $File::Next::name =~ /$regex_G/ && $File::Next::name !~ /$regex_E/ && is_interesting( @_ ) )
+                                }
+            ;
+    }
+    elsif ( $regex_G ) {
+        $file_filter
+            = $opt->{u}   ? sub { $File::Next::name =~ /$regex_G/ } # allow to restrict which files are searched by -G option
+            : $opt->{all} ? sub { $starting_point{ $File::Next::name } || ( $File::Next::name =~ /$regex_G/ && is_searchable( $File::Next::name ) ) }
+            :               sub { $starting_point{ $File::Next::name } || ( $File::Next::name =~ /$regex_G/ && is_interesting( @_ ) ) }
+            ;
+    }
+    elsif ( $regex_E ) {
+        $file_filter
+            = $opt->{u}   ? sub { $File::Next::name !~ /$regex_E/ } # allow to restrict which files are searched by -E option
+            : $opt->{all} ? sub { $starting_point{ $File::Next::name } || ( $File::Next::name !~ /$regex_E/ && is_searchable( $File::Next::name ) ) }
+            :               sub { $starting_point{ $File::Next::name } || ( $File::Next::name !~ /$regex_E/ && is_interesting( @_ ) ) }
             ;
     }
     else {

@@ -84,6 +84,7 @@ File inclusion/exclusion:
   -r, -R, --recurse     Recurse into subdirectories (ack's default behavior)
   -n, --no-recurse      No descending into subdirectories
   -G REGEX              Only search files that match REGEX
+  -E REGEX              Exclude files that match REGEX from search
 
   --perl                Include only Perl files.
   --type=perl           Include only Perl files.

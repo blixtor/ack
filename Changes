@@ -30,6 +30,10 @@ NEXT
     the cases, where ack fails (e.g. running inside emacs on Windows). This
     takes care of issues 90 and 106.
 
+    Added -E REGEX option. -E stands for exclude and is the opposite of -G. It
+    specifies which files are to be excluded from the search. Works with -f and
+    with normal REGEX matching (issue 108).
+    
     Added option --show-types to output the types that ack considers a file
     to have.
 

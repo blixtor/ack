@@ -3,7 +3,7 @@
 use warnings;
 use strict;
 
-use Test::More tests => 55;
+use Test::More tests => 71;
 
 use lib 't';
 use Util;
@@ -352,3 +352,36 @@ F_WITH_REGEX: {
     is( scalar @{$stderr}, 1, 'One line of stderr output' );
     like( $stderr->[0], qr/\(Sue\)/, 'Error message must contain "(Sue)"' );
 }
+
+# all following test cases are written in such a way that have exactly one line
+# of output as the result -> $expected as scalar
+sub test_option {
+    my ($option, $expected, @args) = @_;
+
+    ack_sets_match( \@args, [ $expected ], "Testing option $option: ack @args" );
+}
+
+TEST_E: {
+    my @test_cases = (
+        # $option, $expected, @rest_args_and_files
+        [ qw{ -E t/swamp/sample.rake        -E [.]t$     jruby -l t/ } ],     # -E normal
+        [ qw{ -E t/swamp/sample.rake        -E sample    jruby -l t/swamp/sample.rake } ], # do not exclude files given as starting point
+        [ qw{ -E t/etc/core.2112            -E xxx$      -f    -u t/etc } ],  # -u must find core file but exclude files ending in xxx
+        [ qw{ -E t/text/science-of-myth.txt -E [ey].txt$ -f    -a t/text } ], # -a must find text file but exclude files ending in [ey].txt
+    );
+
+    test_option(@{$_}) for @test_cases;
+}
+
+TEST_E_AND_G: {
+    my @test_cases = (
+        # $option, $expected, @rest_args_and_files
+        [ '-E and -G', qw{ t/pipe.t                   -E swamp   -G pipe jruby -l t/ } ], # -E and -G normal
+        [ '-E and -G', qw{ t/pipe.t                   -E swamp   -g pipe          t/ } ], # -E and -g
+        [ '-E and -G', qw{ t/swamp/groceries/CVS/meat -E another -g CVS/me -u     t/ } ], # -u must find files in CVS dir but exclude nevertheless
+        [ '-E and -G', qw{ t/text/science-of-myth.txt -E up      -g /s     -a     t/text } ], # -a must find text files but exclude nevertheless
+    );
+
+    test_option(@{$_}) for @test_cases;
+}
+
